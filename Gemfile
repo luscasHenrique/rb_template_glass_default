@@ -23,7 +23,7 @@ gem "solid_cable"
 # 2. DESIGN SYSTEM & ARQUITETURA MVC DE UI
 # ==========================================
 gem "tailwindcss-rails"
-gem "view_component", "~> 4.12"
+gem "view_component", "~> 4.14"
 gem "rails_icons", "~> 1.9"
 
 # ==========================================
