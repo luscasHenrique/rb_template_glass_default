@@ -1,0 +1,65 @@
+<% content_for :title, "Novo Termo de Uso" %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="glass-section-title">Cadastrar Nova Versão</h2>
+      <p class="glass-text-sm text-white/70">O termo será salvo como inativo para revisão.</p>
+    </div>
+    
+    <%= render Shared::ButtonComponent.new(
+        text: "Voltar", 
+        icon: "arrow-left", 
+        type: "link", 
+        path: admin_policy_terms_path, 
+        variant: "outline-white", 
+        custom_class: "glass-btn-sm" 
+    ) %>
+  </div>
+
+  <div class="glass-card">
+    <%= form_with(model: [:admin, @policy_term], local: true, class: "space-y-6") do |f| %>
+      
+      <% if @policy_term.errors.any? %>
+        <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/50 text-rose-100 mb-6">
+          <h3 class="text-sm font-bold mb-2">Verifique os erros abaixo:</h3>
+          <ul class="list-disc list-inside text-xs space-y-1">
+            <% @policy_term.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="w-full md:w-1/3">
+        <%= render Shared::InputComponent.new(
+            form: f, 
+            field: :document_version, 
+            label: "Versão do Documento (Ex: v1.0, 2026.1)", 
+            placeholder: "v1.0",
+            variant: @policy_term.errors[:document_version].any? ? "danger" : "default"
+        ) %>
+      </div>
+
+      <div class="w-full">
+        <%= render Shared::TextareaComponent.new(
+            form: f, 
+            field: :content, 
+            label: "Conteúdo Legal (Termos e Políticas)", 
+            placeholder: "Insira o texto completo do termo aqui...",
+            variant: @policy_term.errors[:content].any? ? "danger" : "default",
+            custom_class: "min-h-[300px]"
+        ) %>
+      </div>
+
+      <div class="pt-4 border-t border-white/10 flex justify-end">
+        <%= render Shared::ButtonComponent.new(
+            text: "Salvar Termo (Inativo)", 
+            icon: "document-plus",
+            type: "submit", 
+            variant: "primary"
+        ) %>
+      </div>
+    <% end %>
+  </div>
+</div>

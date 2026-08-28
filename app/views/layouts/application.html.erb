@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title><%= content_for(:title) || "Dashboard - Template Glass" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <!-- ==========================================
+         GATEKEEPER LGPD & TRACKING INTEGRATIONS
+         (Lógica preparada para o futuro MVP de rastreio)
+         ========================================== -->
+    <% if cookies[:cookie_consent] == "true" && defined?(TrackingIntegration) %>
+      <% gtm = TrackingIntegration.find_by(provider_name: 'GTM', is_active: true) %>
+      <% if gtm.present? && gtm.account_id.present? %>
+        <script>
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','<%= gtm.account_id %>');
+        </script>
+      <% end %>
+    <% end %>
+  </head>
+
+  <body class="h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed font-sans antialiased text-white flex md:gap-x-6 p-4 overflow-hidden" 
+        style="background-image: url('<%= asset_path('wall_08.png') %>');">
+
+    <!-- Renderiza a Sidebar (Já possui w-64 no próprio componente) -->
+    <% if user_signed_in? %>
+      <%= render SidebarComponent.new(user: current_user) %>
+    <% end %>
+    
+    <!-- Coluna Direita (Header + Conteúdo Principal) -->
+    <div class="flex flex-col flex-1 min-w-0 h-full space-y-6">
+      
+      <!-- Renderiza o Header dinâmico -->
+      <% if user_signed_in? %>
+        <%= render HeaderComponent.new(title: content_for?(:title) ? yield(:title) : "Dashboard", user: current_user) %>
+      <% end %>
+      
+      <!-- Área Principal (Aqui acontece a rolagem da página) -->
+      <main class="flex-1 overflow-y-auto scroll-smooth pb-4">
+        <%= yield %>
+      </main>
+    </div>
+
+    <!-- ==========================================
+         COMPONENTES GLOBAIS (Fora do fluxo Flexbox)
+         ========================================== -->
+    <div class="fixed inset-0 pointer-events-none z-50">
+      <div class="pointer-events-auto">
+        <%= render Shared::FlashMessagesComponent.new(flash: flash) %>
+        <%= render Shared::CookieBannerComponent.new %>
+      </div>
+    </div>
+    
+    <%= render Shared::GlobalLoadingComponent.new %>
+  </body>
+</html>

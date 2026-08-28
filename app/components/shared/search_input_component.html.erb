@@ -1,0 +1,9 @@
+<div class="glass-search-wrapper">
+  <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/50 z-10">
+    <!-- Arquitetura Limpa: Ícone de busca consumindo a API global -->
+    <%= heroicon "magnifying-glass", options: { class: "w-5 h-5" } %>
+  </div>
+  
+  <!-- Composição Perfeita: Reutilizando o input base -->
+  <%= render Shared::InputComponent.new(form: @form, field: @field, placeholder: @placeholder, custom_class: "pl-12 w-full") %>
+</div>

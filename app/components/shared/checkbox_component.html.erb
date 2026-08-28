@@ -1,0 +1,13 @@
+<div class="<%= final_classes %>">
+  <%= form.check_box field, class: "glass-checkbox", data: input_data %>
+  
+  <div>
+    <% if label.present? %>
+      <%= form.label field, label, class: "text-sm font-medium #{text_color} cursor-pointer select-none m-0 block" %>
+    <% end %>
+    
+    <% if description.present? %>
+      <span class="text-xs <%= desc_color %> mt-1 block"><%= description %></span>
+    <% end %>
+  </div>
+</div>

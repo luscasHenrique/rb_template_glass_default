@@ -1,0 +1,89 @@
+<% content_for :title, "Auditoria - Versão #{@policy_term.document_version}" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="glass-section-title">Auditoria: Termo <%= @policy_term.document_version %></h2>
+    <div class="flex items-center gap-2 mt-1">
+      <span class="glass-text-sm text-white/70">Status:</span>
+      <% if @policy_term.active? %>
+        <%= render Shared::BadgeComponent.new(text: "Em Vigor", variant: "success", icon: "check-circle") %>
+      <% else %>
+        <%= render Shared::BadgeComponent.new(text: "Inativo", variant: "grey", icon: "document") %>
+      <% end %>
+    </div>
+  </div>
+  
+  <%= render Shared::ButtonComponent.new(
+      text: "Voltar para Listagem", 
+      icon: "arrow-left", 
+      type: "link", 
+      path: admin_policy_terms_path, 
+      variant: "default",
+      custom_class: "glass-btn-sm"
+  ) %>
+</div>
+
+<div class="glass-card mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+  <div class="text-sm text-white/80">
+    Total de Aceites: <strong class="text-white text-lg"><%= @agreements.count %></strong>
+  </div>
+
+  <%= form_with(url: admin_policy_term_path(@policy_term), method: :get, local: true, class: "flex items-center gap-2 w-full md:w-auto") do |f| %>
+    <div class="relative w-full md:w-80">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <%= heroicon "magnifying-glass", options: { class: "w-4 h-4 text-white/40" } %>
+      </div>
+      <%= f.text_field :search, value: params[:search], placeholder: "Buscar por e-mail...", class: "w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/50" %>
+    </div>
+    
+    <%= render Shared::ButtonComponent.new(
+        text: "Filtrar", 
+        type: "submit", 
+        variant: "secondary",
+        custom_class: "glass-btn-sm"
+    ) %>
+    
+    <% if params[:search].present? %>
+      <%= link_to "Limpar", admin_policy_term_path(@policy_term), class: "text-xs text-white/50 hover:text-white underline ml-2" %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="glass-card p-0 overflow-hidden">
+  <div class="overflow-x-auto custom-scrollbar">
+    <table class="w-full text-left text-sm text-white/80">
+      <thead class="bg-white/5 border-b border-white/10 text-white/90">
+        <tr>
+          <th class="px-6 py-4 font-semibold">Usuário (E-mail)</th>
+          <th class="px-6 py-4 font-semibold">Data/Hora do Aceite</th>
+          <th class="px-6 py-4 font-semibold">Endereço IP</th>
+          <th class="px-6 py-4 font-semibold">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5">
+        <% @agreements.each do |agreement| %>
+          <tr class="hover:bg-white/5 transition-colors">
+            <td class="px-6 py-4 font-medium text-white"><%= agreement.user.email %></td>
+            <td class="px-6 py-4"><%= agreement.accepted_at.strftime("%d/%m/%Y às %H:%M:%S") %></td>
+            <td class="px-6 py-4 font-mono text-xs text-white/50"><%= agreement.ip_address %></td>
+            <td class="px-6 py-4">
+              <%= render Shared::BadgeComponent.new(
+                  text: "Assinado Digitalmente", 
+                  variant: "success", 
+                  icon: "check-badge"
+              ) %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% if @agreements.empty? %>
+          <tr>
+            <td colspan="4" class="px-6 py-8 text-center text-white/50">
+              Nenhum aceite registrado ou encontrado para este filtro.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

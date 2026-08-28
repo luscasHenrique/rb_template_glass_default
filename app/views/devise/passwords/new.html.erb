@@ -1,0 +1,22 @@
+<div class="w-full">
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-white mb-2">Esqueceu a senha?</h2>
+    <p class="text-white/70 text-sm">Enviaremos as instruções de recuperação</p>
+  </div>
+
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-6" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <%= render Shared::InputComponent.new(
+               form: f, field: :email, type: "email", label: "E-mail cadastrado", placeholder: "seu@email.com",
+               variant: resource.errors[:email].any? ? "danger" : "default") %>
+
+    <div class="pt-2">
+      <%= render Shared::ButtonComponent.new(
+                 text: "Enviar instruções", type: "submit", variant: "primary", 
+                 custom_class: "w-full", loading_text: "Enviando...") %>
+    </div>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+</div>

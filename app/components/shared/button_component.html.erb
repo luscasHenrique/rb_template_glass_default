@@ -1,0 +1,37 @@
+<% button_content = capture do %>
+  <!-- ESTADO NORMAL: Div limpa, controlando apenas o gap -->
+  <div class="flex items-center justify-center gap-2" data-button-loading-target="normal">
+    <% if @icon.present? && @icon_position == "left" %>
+      <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+    <% end %>
+
+    <% if @text.present? %>
+      <span><%= @text %></span>
+    <% end %>
+
+    <% if @icon.present? && @icon_position == "right" %>
+      <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+    <% end %>
+  </div>
+
+  <!-- ESTADO DE LOADING -->
+  <div class="hidden items-center justify-center gap-2" data-button-loading-target="loading">
+    <%= heroicon "arrow-path", options: { class: "w-5 h-5 animate-spin shrink-0" } %>
+    <span><%= @loading_text %></span>
+  </div>
+<% end %>
+
+<!-- RENDERIZAÇÃO ÚNICA -->
+<% if @type == "link" %>
+  <%= link_to @path, class: final_classes, data: merged_data, onclick: @onclick do %>
+    <%= button_content %>
+  <% end %>
+<% elsif @type == "button_to" %>
+  <%= button_to @path, method: @method, class: final_classes, form_class: "inline-block m-0 p-0 w-full sm:w-auto", data: merged_data, onclick: @onclick do %>
+    <%= button_content %>
+  <% end %>
+<% else %>
+  <%= button_tag type: @type, class: final_classes, data: merged_data, onclick: @onclick do %>
+    <%= button_content %>
+  <% end %>
+<% end %>

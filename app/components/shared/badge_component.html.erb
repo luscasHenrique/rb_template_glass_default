@@ -1,0 +1,6 @@
+<span class="<%= final_classes %>">
+  <% if @icon.present? %>
+    <%= heroicon @icon, options: { class: "w-3.5 h-3.5 shrink-0" } %>
+  <% end %>
+  <%= @text %>
+</span>

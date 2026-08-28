@@ -1,0 +1,15 @@
+<div class="space-y-2 <%= @custom_class %>">
+  <% if @label.present? %>
+    <div class="glass-label"><%= @label %></div>
+  <% end %>
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <% @collection.each do |text, val| %>
+      <% if @type == :radio %>
+        <%= render Shared::RadioButtonComponent.new(form: @form, field: @field, value: val, label: text) %>
+      <% else %>
+        <%= render Shared::CheckboxComponent.new(form: @form, field: @field, label: text, custom_class: "p-3", input_data: { value: val }) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

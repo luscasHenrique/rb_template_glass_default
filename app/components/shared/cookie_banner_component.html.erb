@@ -1,0 +1,25 @@
+<div class="glass-cookie-banner-wrapper" data-controller="cookie-consent">
+  <div class="glass-cookie-banner-card">
+    
+    <div class="flex items-center gap-3">
+      <!-- Ícone de Segurança usando nossa nova arquitetura -->
+      <div class="p-2 bg-violet-500/20 rounded-lg shrink-0 hidden sm:block">
+        <%= heroicon "shield-check", options: { class: "w-6 h-6 text-violet-400" } %>
+      </div>
+      
+      <div class="text-sm text-white/80">
+        <span class="font-bold text-white">Privacidade e LGPD:</span> Utilizamos cookies para garantir a melhor experiência e analisar o tráfego do sistema.
+      </div>
+    </div>
+
+    <div class="flex gap-2 shrink-0 mt-3 sm:mt-0 w-full sm:w-auto">
+      <%= render Shared::ButtonComponent.new(
+            text: "Aceitar e Fechar", 
+            variant: "primary", 
+            custom_class: "glass-btn-sm w-full sm:w-auto",
+            data: { action: "click->cookie-consent#accept" }
+      ) %>
+    </div>
+    
+  </div>
+</div>

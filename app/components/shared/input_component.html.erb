@@ -1,0 +1,19 @@
+<div class="space-y-1 w-full">
+  <% if label.present? %>
+    <%= form.label field, label, class: label_color %>
+  <% end %>
+  
+  <% if type == "date" %>
+    <%= form.date_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% elsif type == "email" %>
+    <%= form.email_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% elsif type == "number" %>
+    <%= form.number_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% elsif type == "password" %>
+    <%= form.password_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% elsif type == "datetime-local" %>
+    <%= form.datetime_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% else %>
+    <%= form.text_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <% end %>
+</div>

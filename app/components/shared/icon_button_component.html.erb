@@ -1,0 +1,7 @@
+<%= button_to @path, method: @method, class: final_classes, data: @data, title: @title, form_class: "inline-block m-0 p-0" do %>
+  <% if content.present? %>
+    <%= content %>
+  <% elsif @icon.present? %>
+    <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+  <% end %>
+<% end %>

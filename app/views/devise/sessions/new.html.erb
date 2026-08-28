@@ -1,0 +1,44 @@
+<div class="w-full">
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h2>
+    <p class="text-white/70 text-sm">Acesse sua conta para continuar</p>
+  </div>
+
+  <!-- ARQUITETURA LIMPA: Removido o data: { turbo: false } -->
+  <!-- Agora o form usa o Hotwire nativo para submissões assíncronas super rápidas -->
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-6" }) do |f| %>    
+    
+    <%= render Shared::InputComponent.new(
+               form: f, field: :email, type: "email", label: "E-mail", placeholder: "seu@email.com") %>
+
+    <%= render Shared::PasswordInputComponent.new(
+               form: f, field: :password, label: "Senha", placeholder: "••••••••",
+               input_data: { autocomplete: "current-password" }) %>
+
+    <div class="flex items-center justify-between text-sm">
+      <% if devise_mapping.rememberable? %>
+        <%= render Shared::CheckboxComponent.new(
+                   form: f, field: :remember_me, label: "Lembrar-me", variant: "minimal") %>
+      <% end %>
+
+      <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+        <!-- UX Refinada: Adicionado transition-colors para um hover mais premium -->
+        <%= link_to "Esqueceu a senha?", new_password_path(resource_name), class: "text-white font-semibold hover:text-violet-300 hover:underline transition-colors duration-200" %>
+      <% end %>
+    </div>
+
+    <div class="pt-2">
+      <%= render Shared::ButtonComponent.new(
+                 text: "Entrar", type: "submit", variant: "outline-blue", 
+                 custom_class: "w-full", loading_text: "Autenticando...") %>
+    </div>
+  <% end %>
+
+  <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+    <div class="mt-6 text-center text-sm text-white/70">
+      Não tem uma conta? 
+      <!-- UX Refinada: Hover alinhado com a paleta do Design System -->
+      <%= link_to "Cadastre-se", new_registration_path(resource_name), class: "text-white font-bold hover:text-violet-400 hover:underline transition-colors duration-200" %>
+    </div>
+  <% end %>
+</div>

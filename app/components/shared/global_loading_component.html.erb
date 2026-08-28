@@ -1,0 +1,14 @@
+<!-- Adicionamos o controlador Stimulus que vai gerenciar a visibilidade globalmente -->
+<div id="global-loading" 
+     class="glass-overlay hidden"
+     data-controller="global-loader">
+     
+  <div class="flex flex-col items-center justify-center">
+    <div class="flex items-center space-x-2">
+      <div class="w-4 h-4 rounded-full bg-violet-500 glass-dot"></div>
+      <div class="w-4 h-4 rounded-full bg-fuchsia-500 glass-dot [animation-delay:0.2s]"></div>
+      <div class="w-4 h-4 rounded-full bg-cyan-500 glass-dot [animation-delay:0.4s]"></div>
+    </div>
+    <p class="glass-loader-text <%= text_variant_class %>"><%= @text %></p>
+  </div>
+</div>

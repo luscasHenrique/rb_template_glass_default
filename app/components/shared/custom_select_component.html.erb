@@ -1,0 +1,31 @@
+<div class="space-y-1 w-full" data-controller="custom-select" data-action="click@window->custom-select#hide">
+  <% if label.present? %>
+    <%= form.label field, label, class: "glass-label" %>
+  <% end %>
+
+  <div class="relative">
+    <%= form.hidden_field field, data: { custom_select_target: "input" } %>
+
+    <button type="button" 
+            data-action="click->custom-select#toggle"
+            class="glass-select-trigger px-4 py-3 text-base">
+      <span data-custom-select-target="buttonText" class="text-white"><%= current_selected_text %></span>
+      
+      <!-- Arquitetura Limpa: Uso do Heroicon dinâmico para a seta -->
+      <%= heroicon "chevron-down", options: { class: "w-5 h-5 text-white/50 shrink-0" } %>
+    </button>
+
+    <div data-custom-select-target="dropdown" class="glass-select-dropdown">
+      <ul class="py-1">
+        <% collection.each do |text, value| %>
+          <li data-action="click->custom-select#select" 
+              data-value="<%= value %>" 
+              data-text="<%= text %>"
+              class="glass-select-option">
+            <%= text %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

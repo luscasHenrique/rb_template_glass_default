@@ -1,0 +1,19 @@
+<div class="glass-flash-container" id="flash-messages">
+  <% @flash.each do |type, message| %>
+    <div class="<%= toast_class(type) %>" data-controller="removal" data-removal-timeout-value="5000">
+      
+      <!-- Ícone Semântico Dinâmico via Heroicons -->
+      <div class="w-6 h-6 shrink-0 mt-0.5">
+        <%= heroicon icon_for(type), options: { class: "w-6 h-6" } %>
+      </div>
+
+      <div class="flex-1 text-sm font-medium"><%= message %></div>
+      
+      <!-- Botão de Fechar com SVG Refatorado -->
+      <button data-action="click->removal#remove" class="text-white/50 hover:text-white transition-colors cursor-pointer shrink-0">
+        <%= heroicon "x-mark", options: { class: "w-5 h-5" } %>
+      </button>
+      
+    </div>
+  <% end %>
+</div>
