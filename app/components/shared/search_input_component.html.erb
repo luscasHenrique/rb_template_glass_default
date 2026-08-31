@@ -1,9 +1,20 @@
-<div class="glass-search-wrapper">
-  <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/50 z-10">
-    <!-- Arquitetura Limpa: Ícone de busca consumindo a API global -->
-    <%= heroicon "magnifying-glass", options: { class: "w-5 h-5" } %>
+<div class="space-y-1 w-full <%= @custom_class %>">
+  <% if @label.present? %>
+    <%= @form.label @field, @label, class: "glass-label" %>
+  <% end %>
+
+  <div class="glass-search-wrapper">
+    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/50 z-10">
+      <%= heroicon "magnifying-glass", options: { class: "w-5 h-5" } %>
+    </div>
+    
+    <!-- Composição Perfeita: O InputComponent é chamado sem label (para não duplicar) -->
+    <%= render Shared::InputComponent.new(
+        form: @form, 
+        field: @field, 
+        placeholder: @placeholder, 
+        value: @value,
+        custom_class: "pl-11 w-full" 
+    ) %>
   </div>
-  
-  <!-- Composição Perfeita: Reutilizando o input base -->
-  <%= render Shared::InputComponent.new(form: @form, field: @field, placeholder: @placeholder, custom_class: "pl-12 w-full") %>
 </div>

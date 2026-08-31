@@ -1,0 +1,49 @@
+<turbo-frame id="remote_modal">
+  <%= render Shared::ModalComponent.new(id: "edit_term_modal", size: "lg") do |modal| %>
+    
+    <% modal.with_header do %>
+      Editar Rascunho (<%= @policy_term.document_version %>)
+    <% end %>
+
+    <% modal.with_body do %>
+      <%= form_with(model: [:admin, @policy_term], id: "edit_term_form", class: "space-y-6", data: { turbo_frame: "_top" }) do |f| %>
+        
+        <% if @policy_term.errors.any? %>
+          <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/50 text-rose-100 mb-6">
+            <ul class="list-disc list-inside text-xs space-y-1">
+              <% @policy_term.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= render Shared::InputComponent.new(
+            form: f, field: :document_version, label: "Versão do Documento", 
+            value: f.object.document_version,
+            variant: @policy_term.errors[:document_version].any? ? "danger" : "default"
+        ) %>
+
+        <%= render Shared::TextareaComponent.new(
+            form: f, field: :content, label: "Conteúdo Legal", custom_class: "min-h-[250px]",
+            value: f.object.content,
+            variant: @policy_term.errors[:content].any? ? "danger" : "default"
+        ) %>
+      <% end %>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "default", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <!-- Arquitetura Limpa: Componente renderizando o submit externo via form_id -->
+      <%= render Shared::ButtonComponent.new(
+          text: "Salvar Alterações", icon: "check", type: "submit", variant: "outline-blue", custom_class: "glass-btn-sm",
+          form_id: "edit_term_form" 
+      ) %>
+    <% end %>
+
+  <% end %>
+</turbo-frame>

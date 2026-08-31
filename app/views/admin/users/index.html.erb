@@ -1,0 +1,113 @@
+<% content_for :title, "Gestão de Usuários" %>
+
+<%= form_with url: admin_users_path, method: :get, class: "w-full space-y-6" do |f| %>
+
+  <div class="glass-card">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="glass-section-title flex items-center gap-2">
+          <%= heroicon "users", options: { class: "w-6 h-6 text-violet-400" } %>
+          Usuários do Sistema
+        </h2>
+        <p class="glass-text-sm text-white/70 mt-1">Gerencie acessos, papéis e perfis da plataforma.</p>
+      </div>
+      
+      <%= render Shared::ButtonComponent.new(
+          text: "Novo Usuário", 
+          icon: "plus", 
+          type: "link", 
+          path: new_admin_user_path, 
+          variant: "outline-blue",
+          data: { turbo_frame: "remote_modal" }
+      ) %>
+    </div>
+  </div>
+
+  <%= render Shared::TableComponent.new(
+      headers: ["Usuário", "Contato", "Papel (Role)", "Status", "Cadastro", { text: "Ações", align: "right" }],
+      selectable: true
+  ) do |table| %>
+      
+<!-- GAVETA DE FILTROS -->
+      <% table.with_filters do %>
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="w-full md:w-64">
+            <%= render Shared::SearchInputComponent.new(form: f, field: :query, label: "Buscar", placeholder: "Buscar nome ou e-mail...", value: params[:query]) %>
+          </div>
+          
+          <div class="w-full md:w-48">
+            <%= render Shared::MultiSelectComponent.new(form: f, field: :role, collection: User.roles.keys.map { |r| [r.humanize, r] }, variant: "primary", label: "Filtrar por Papéis") %>
+          </div>
+
+          <!-- BLOCO DE DATAS LADO A LADO -->
+          <div class="w-full md:w-36">
+            <%= render Shared::InputComponent.new(form: f, field: :start_date, type: "date", label: "Data Inicial", value: params[:start_date]) %>
+          </div>
+          
+          <div class="w-full md:w-36">
+            <%= render Shared::InputComponent.new(form: f, field: :end_date, type: "date", label: "Data Final", value: params[:end_date]) %>
+          </div>
+          
+          <%= render Shared::ButtonComponent.new(text: "Filtrar", type: "submit", variant: "outline-primary", icon: "funnel") %>
+          
+          <% if params[:query].present? || params[:role].present? || params[:start_date].present? || params[:end_date].present? %>
+            <%= render Shared::ButtonComponent.new(text: "Limpar", type: "link", path: admin_users_path, variant: "ghost") %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- GAVETA DE EXPORTAÇÃO -->
+      <% table.with_actions do %>
+        <%= render Shared::ButtonComponent.new(
+            text: "Exportar Filtro (CSV)", 
+            icon: "arrow-down-tray", 
+            type: "link", 
+            variant: "outline-success",
+            path: admin_users_path(request.query_parameters.merge(format: :csv)) 
+        ) %>
+      <% end %>
+
+      <!-- LINHAS DA TABELA -->
+      <% @users.each do |user| %>
+      <tr class="hover:bg-white/5 transition-colors">
+        <td class="px-6 py-4 text-center">
+          <div class="glass-checkbox-wrapper glass-checkbox-wrapper-minimal justify-center">
+            <input type="checkbox" class="glass-checkbox" value="<%= user.id %>">
+          </div>
+        </td>
+
+        <td class="px-6 py-4">
+          <div class="font-medium text-white"><%= user.profile&.first_name %> <%= user.profile&.last_name %></div>
+        </td>
+        
+        <td class="px-6 py-4 text-white/70 text-sm"><%= user.email %></td>
+        
+        <td class="px-6 py-4">
+          <%= render Shared::BadgeComponent.new(text: user.role.upcase, variant: user.admin? || user.master? ? "warning" : "info") %>
+        </td>
+        
+        <td class="px-6 py-4">
+          <%= render Shared::BadgeComponent.new(text: user.active ? "Ativo" : "Bloqueado", variant: user.active ? "success" : "danger") %>
+        </td>
+
+        <td class="px-6 py-4 text-white/50 text-sm"><%= user.created_at.strftime("%d/%m/%Y") %></td>
+        
+        <td class="px-6 py-4 flex justify-end gap-2">
+          <%= render Shared::IconButtonComponent.new(
+              icon: "pencil-square", path: edit_admin_user_path(user),
+              type: "link", variant: "warning", title: "Editar Usuário",
+              data: { turbo_frame: "remote_modal" }
+          ) %>
+          
+          <%= render Shared::IconButtonComponent.new(
+              icon: "trash", path: confirm_destroy_admin_user_path(user),
+              type: "link", variant: "danger", title: "Excluir Usuário",
+              data: { turbo_frame: "remote_modal" }
+          ) %>
+        </td>
+      </tr>
+      <% end %>
+  <% end %>
+<% end %>
+
+<turbo-frame id="remote_modal"></turbo-frame>

@@ -1,0 +1,57 @@
+<%= form_with model: [:admin, user], id: "user_form", class: "space-y-6" do |f| %>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Atributos Aninhados do Profile -->
+    <%= f.fields_for :profile, user.profile || user.build_profile do |pf| %>
+      <%= render Shared::InputComponent.new(form: pf, field: :first_name, label: "Nome", placeholder: "Ex: João") %>
+      <%= render Shared::InputComponent.new(form: pf, field: :last_name, label: "Sobrenome", placeholder: "Ex: Silva") %>
+      <%= render Shared::InputComponent.new(form: pf, field: :phone, label: "Telefone (Opcional)", placeholder: "Ex: 11999999999") %>
+    <% end %>
+
+    <!-- Atributos Diretos do User -->
+    <%= render Shared::InputComponent.new(form: f, field: :email, type: "email", label: "E-mail Corporativo", placeholder: "usuario@empresa.com") %>
+    
+    <!-- CORREÇÃO DE UI: Substituição do select nativo pelo CustomSelectComponent -->
+    <%= render Shared::CustomSelectComponent.new(
+        form: f, 
+        field: :role, 
+        collection: User.roles.keys.map { |r| [r.humanize, r] }, 
+        label: "Papel de Acesso (Role)"
+    ) %>
+
+    <%= render Shared::CustomSelectComponent.new(
+        form: f, 
+        field: :active, 
+        collection: [["Ativo / Liberado", true], ["Bloqueado / Inativo", false]], 
+        label: "Status da Conta"
+    ) %>
+  </div>
+
+  <!-- Bloco Isolado para Senhas -->
+  <div class="bg-black/20 p-4 rounded-xl border border-white/5 space-y-4">
+    <h4 class="text-sm font-semibold text-white/70 uppercase tracking-wider flex items-center gap-2">
+      <%= heroicon "lock-closed", options: { class: "w-4 h-4" } %>
+      Segurança de Acesso
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <% pwd_placeholder = user.persisted? ? "Deixe em branco para manter a atual" : "Mínimo 6 caracteres" %>
+      
+      <!-- ARQUITETURA LIMPA: Consumindo o componente especializado com o toggle de visibilidade -->
+      <%= render Shared::PasswordInputComponent.new(
+          form: f, 
+          field: :password, 
+          label: "Senha", 
+          placeholder: pwd_placeholder
+      ) %>
+      
+      <%= render Shared::PasswordInputComponent.new(
+          form: f, 
+          field: :password_confirmation, 
+          label: "Confirmação de Senha", 
+          placeholder: pwd_placeholder
+      ) %>
+    </div>
+  </div>
+
+<% end %>

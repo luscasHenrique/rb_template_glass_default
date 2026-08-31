@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_26_123216) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_31_185935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_123216) do
     t.datetime "updated_at", null: false
     t.string "zip_code"
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+  end
+
+  create_table "cookie_consents", force: :cascade do |t|
+    t.boolean "analytics_accepted", default: false
+    t.datetime "created_at", null: false
+    t.string "ip_address", null: false
+    t.boolean "marketing_accepted", default: false
+    t.boolean "necessary_accepted", default: true, null: false
+    t.string "session_hash", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["session_hash", "user_id"], name: "index_cookie_consents_on_session_hash_and_user_id", unique: true
+    t.index ["session_hash"], name: "index_cookie_consents_on_session_hash"
+    t.index ["user_id"], name: "index_cookie_consents_on_user_id"
+  end
+
+  create_table "cookie_policies", force: :cascade do |t|
+    t.boolean "active", default: false, null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "version", null: false
+    t.index ["active"], name: "index_cookie_policies_on_active"
+    t.index ["version"], name: "index_cookie_policies_on_version", unique: true
   end
 
   create_table "policy_terms", force: :cascade do |t|
@@ -87,10 +111,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_123216) do
     t.bigint "item_id", null: false
     t.string "item_type", null: false
     t.text "object"
+    t.text "object_changes"
+    t.bigint "transaction_id"
     t.string "whodunnit"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["transaction_id"], name: "index_versions_on_transaction_id"
   end
 
+  add_foreign_key "cookie_consents", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "user_agreements", "policy_terms"
   add_foreign_key "user_agreements", "users"

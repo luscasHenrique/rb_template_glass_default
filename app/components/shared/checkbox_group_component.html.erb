@@ -8,7 +8,16 @@
       <% if @type == :radio %>
         <%= render Shared::RadioButtonComponent.new(form: @form, field: @field, value: val, label: text) %>
       <% else %>
-        <%= render Shared::CheckboxComponent.new(form: @form, field: @field, label: text, custom_class: "p-3", input_data: { value: val }) %>
+        <!-- INTEGRAÇÃO CORRETA: Passando os valores estruturais em vez de usar data-attributes -->
+        <%= render Shared::CheckboxComponent.new(
+            form: @form, 
+            field: @field, 
+            label: text, 
+            custom_class: "p-3", 
+            checked_value: val, 
+            unchecked_value: nil, 
+            multiple: true
+        ) %>
       <% end %>
     <% end %>
   </div>

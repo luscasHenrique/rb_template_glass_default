@@ -14,8 +14,16 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
-  # 
+ 
+  resource :cookie_policy, only: [:show], path: 'politica-de-cookies'
+  resources :cookie_consents, only: [:create]
+
+  resources :cookie_policies do
+      member do
+        patch :activate
+        get :confirm_destroy
+      end
+    end
   # Fluxo do Usuário (Bloqueio de Tela)
   resources :terms, only: [] do
     collection do
@@ -27,9 +35,23 @@ Rails.application.routes.draw do
 
   # Fluxo do Administrador (Backoffice SaaS)
   namespace :admin do
+    resources :users do
+      member do
+        get :confirm_destroy
+      end
+    end
+    resources :audits, only: [:index, :show]
     resources :policy_terms do
       member do
         patch :activate # Botão específico para aprovar e ativar um termo
+        get :confirm_destroy
+      end
+    end
+
+    resources :cookie_policies do
+      member do
+        patch :activate
+        get :confirm_destroy
       end
     end
   end

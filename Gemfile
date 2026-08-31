@@ -41,6 +41,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "image_processing", "~> 1.2"
 gem "rails-i18n", "~> 8.1"
 gem "devise-i18n", "~> 1.16"
+gem 'csv'
 
 # ==========================================
 # 5. DEPLOYMENT (CI/CD)

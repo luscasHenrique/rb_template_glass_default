@@ -1,6 +1,6 @@
 module Admin
   class PolicyTermsController < ApplicationController
-    before_action :set_policy_term, only: [:show, :activate, :edit, :update, :destroy]
+    before_action :set_policy_term, only: [:show, :activate, :edit, :update, :destroy, :confirm_destroy]
 
     def index
       authorize [:admin, PolicyTerm]
@@ -65,6 +65,15 @@ module Admin
         flash[:success] = "Termo versão #{@policy_term.document_version} ATIVADO! O bloqueio global está valendo."
       end
       redirect_to admin_policy_terms_path
+    end
+
+    def confirm_destroy
+      authorize [:admin, @policy_term]
+      
+      # Trava de segurança UX: Se for ativo, nem abre o modal, recarrega a página com erro
+      if @policy_term.active?
+        redirect_to admin_policy_terms_path, warning: "Termos em vigor não podem ser excluídos." 
+      end
     end
 
     private

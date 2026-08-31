@@ -1,0 +1,28 @@
+<%= turbo_frame_tag "remote_modal" do %>
+  <%= render Shared::ModalComponent.new(id: "edit_user_modal", size: "lg") do |modal| %>
+    
+    <% modal.with_header do %>
+      <div class="flex items-center gap-2 text-white">
+        <%= heroicon "pencil-square", options: { class: "w-6 h-6 text-warning shrink-0" } %>
+        Editar Usuário
+      </div>
+    <% end %>
+
+    <% modal.with_body do %>
+      <%= render "form", user: @user %>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "ghost", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <%= render Shared::ButtonComponent.new(
+          text: "Atualizar Dados", icon: "arrow-path", type: "submit", form_id: "user_form",
+          variant: "warning", custom_class: "glass-btn-sm", loading_text: "Atualizando..."
+      ) %>
+    <% end %>
+
+  <% end %>
+<% end %>

@@ -1,85 +1,88 @@
 <% content_for :title, "Gestão de Termos de Uso" %>
 
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h2 class="glass-section-title">Políticas e Termos de Uso</h2>
-    <p class="glass-text-sm text-white/70">Gerencie as versões e ative os termos para os usuários.</p>
+<!-- 1. Cabeçalho Isolado -->
+<div class="glass-card mb-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="glass-section-title">Políticas e Termos de Uso</h2>
+      <p class="glass-text-sm text-white/70 mt-1">Gerencie as versões e ative os termos para os usuários.</p>
+    </div>
+    
+    <%= render Shared::ButtonComponent.new(
+        text: "Novo Termo",
+        icon: "plus",
+        type: "link",
+        path: new_admin_policy_term_path,
+        variant: "outline-blue"
+    ) %>
   </div>
+</div>
+
+<!-- 2. Componente de Tabela Responsivo -->
+<%= render Shared::TableComponent.new(
+    headers: ["Versão", "Data de Criação", "Status", { text: "Ações", align: "right" }],
+    selectable: true
+) do %>
   
-  <%= render Shared::ButtonComponent.new(
-      text: "Novo Termo",
-      icon: "plus",
-      type: "link",
-      path: new_admin_policy_term_path,
-      variant: "outline-blue"
-  ) %>
-</div>
+  <% @policy_terms.each do |term| %>
+    <tr class="hover:bg-white/5 transition-colors">
+      
+      <td class="px-6 py-4 text-center">
+        <div class="glass-checkbox-wrapper glass-checkbox-wrapper-minimal justify-center">
+            <input type="checkbox" class="glass-checkbox" value="<%= term.id %>" 
+            data-table-target="rowCheckbox" 
+            data-action="change->table#checkRow">        
+        </div>
+      </td>
 
-<div class="glass-card p-0 overflow-hidden">
-  <div class="overflow-x-auto custom-scrollbar">
-    <table class="w-full text-left text-sm text-white/80">
-      <thead class="bg-white/5 border-b border-white/10 text-white/90">
-        <tr>
-          <th class="px-6 py-4 font-semibold">Versão</th>
-          <th class="px-6 py-4 font-semibold">Data de Criação</th>
-          <th class="px-6 py-4 font-semibold">Status</th>
-          <th class="px-6 py-4 font-semibold text-right">Ações</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-white/5">
-        <% @policy_terms.each do |term| %>
-          <tr class="hover:bg-white/5 transition-colors">
-            <td class="px-6 py-4 font-medium"><%= term.document_version %></td>
-            <td class="px-6 py-4"><%= term.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-            <td class="px-6 py-4">
-              <% if term.active? %>
-                <%= render Shared::BadgeComponent.new(
-                    text: "Em Vigor", 
-                    variant: "success", 
-                    icon: "check-circle"
-                ) %>
-              <% else %>
-                <%= render Shared::BadgeComponent.new(
-                    text: "Inativo / Rascunho", 
-                    variant: "grey", 
-                    icon: "document"
-                ) %>
-              <% end %>
-            </td>
-            <td class="px-6 py-4 flex items-center justify-end gap-2">
-              <%= render Shared::IconButtonComponent.new(
-                  icon: "eye", path: admin_policy_term_path(term), method: :get, variant: "info", title: "Auditoria de Aceites"
-              ) %>
-
-              <% unless term.active? %>
-                <%= render Shared::IconButtonComponent.new(
-                    icon: "pencil-square", path: edit_admin_policy_term_path(term), method: :get, variant: "warning", title: "Editar Rascunho"
-                ) %>
-
-                <%= render Shared::IconButtonComponent.new(
-                    icon: "trash", path: admin_policy_term_path(term), method: :delete, variant: "danger", title: "Excluir Rascunho",
-                    data: { turbo_confirm: "Tem certeza que deseja excluir este rascunho?" }
-                ) %>
-
-                <div class="w-px h-6 bg-white/10 mx-1"></div>
-
-                <%= render Shared::IconButtonComponent.new(
-                    icon: "check-circle", path: activate_admin_policy_term_path(term), method: :patch, variant: "success", title: "Ativar Termo Oficial",
-                    data: { turbo_confirm: "Atenção: Ao ativar, todos os usuários serão bloqueados até aceitarem esta versão. Confirma?" }
-                ) %>
-              <% end %>
-            </td>
-          </tr>
+      <td class="px-6 py-4 font-medium"><%= term.document_version %></td>
+      <td class="px-6 py-4"><%= term.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+      
+      <td class="px-6 py-4">
+        <% if term.active? %>
+          <%= render Shared::BadgeComponent.new(text: "Em Vigor", variant: "success", icon: "check-circle") %>
+        <% else %>
+          <%= render Shared::BadgeComponent.new(text: "Inativo / Rascunho", variant: "grey", icon: "document") %>
         <% end %>
-        
-        <% if @policy_terms.empty? %>
-          <tr>
-            <td colspan="4" class="px-6 py-8 text-center text-white/50">
-              Nenhum termo cadastrado ainda.
-            </td>
-          </tr>
+      </td>
+      
+      <td class="px-6 py-4 flex items-center justify-end gap-2">
+        <%= render Shared::IconButtonComponent.new(icon: "eye", path: admin_policy_term_path(term), method: :get, variant: "info", title: "Auditoria de Aceites") %>
+
+        <% unless term.active? %>
+          <!-- A MÁGICA ACONTECE AQUI: turbo_frame aponta para o ID no final do arquivo -->
+          <%= render Shared::IconButtonComponent.new(
+              icon: "pencil-square", 
+              path: edit_admin_policy_term_path(term), 
+              type: "link", 
+              variant: "warning", 
+              title: "Editar Rascunho",
+              data: { turbo_frame: "remote_modal" } 
+          ) %>
+          
+        <%= render Shared::IconButtonComponent.new(
+              icon: "trash", 
+              path: confirm_destroy_admin_policy_term_path(term), 
+              type: "link", 
+              variant: "danger", 
+              title: "Excluir Rascunho", 
+              data: { turbo_frame: "remote_modal" } 
+          ) %>          
+          <div class="w-px h-6 bg-white/10 mx-1"></div>
+          
+          <%= render Shared::IconButtonComponent.new(icon: "check-circle", path: activate_admin_policy_term_path(term), method: :patch, variant: "success", title: "Ativar Termo Oficial", data: { turbo_confirm: "Atenção: Ao ativar, todos os usuários serão bloqueados até aceitarem esta versão. Confirma?" }) %>
         <% end %>
-      </tbody>
-    </table>
-  </div>
-</div>
+      </td>
+    </tr>
+  <% end %>
+  
+  <% if @policy_terms.empty? %>
+    <tr>
+      <td colspan="5" class="px-6 py-8 text-center text-white/50">Nenhum termo cadastrado ainda.</td>
+    </tr>
+  <% end %>
+
+<% end %>
+
+<!-- 3. Ponto de Ancoragem do Modal (Deve ficar isolado no final) -->
+<turbo-frame id="remote_modal"></turbo-frame>

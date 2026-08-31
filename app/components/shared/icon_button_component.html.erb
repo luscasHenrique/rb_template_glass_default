@@ -1,7 +1,26 @@
-<%= button_to @path, method: @method, class: final_classes, data: @data, title: @title, form_class: "inline-block m-0 p-0" do %>
-  <% if content.present? %>
-    <%= content %>
-  <% elsif @icon.present? %>
-    <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+<% if @type == "link" %>
+  <%= link_to @path, class: final_classes, data: @data, title: @title do %>
+    <% if content.present? %>
+      <%= content %>
+    <% elsif @icon.present? %>
+      <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+    <% end %>
+  <% end %>
+<% elsif @type == "button_to" %>
+  <%= button_to @path, method: @method, class: final_classes, data: @data, title: @title, form_class: "inline-block m-0 p-0" do %>
+    <% if content.present? %>
+      <%= content %>
+    <% elsif @icon.present? %>
+      <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+    <% end %>
+  <% end %>
+<% else %>
+  <!-- Adicionado o bloco para button_tag com suporte a form: @form_id -->
+  <%= button_tag type: @type, class: final_classes, data: @data, title: @title, form: @form_id do %>
+    <% if content.present? %>
+      <%= content %>
+    <% elsif @icon.present? %>
+      <%= heroicon @icon, options: { class: "w-5 h-5 shrink-0" } %>
+    <% end %>
   <% end %>
 <% end %>

@@ -1,0 +1,36 @@
+<turbo-frame id="remote_modal">
+  <!-- Tamanho 'sm' para manter o modal de confirmação pequeno e direto -->
+  <%= render Shared::ModalComponent.new(id: "delete_term_modal", size: "sm") do |modal| %>
+    
+    <% modal.with_header do %>
+      <div class="flex items-center gap-2 text-rose-500">
+        <%= heroicon "exclamation-triangle", options: { class: "w-6 h-6 shrink-0" } %>
+        Confirmar Exclusão
+      </div>
+    <% end %>
+
+    <% modal.with_body do %>
+      <p class="text-white/80">
+        Tem certeza que deseja excluir permanentemente o rascunho da versão <strong class="text-white"><%= @policy_term.document_version %></strong>?
+      </p>
+      <p class="text-sm text-white/50 mt-2">Esta ação não poderá ser desfeita.</p>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "default", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <!-- O verdadeiro botão de DELETE. O data: { turbo_frame: "_top" } força a tela toda a recarregar após deletar -->
+      <%= render Shared::ButtonComponent.new(
+          text: "Sim, Excluir", icon: "trash", type: "button_to", method: :delete, 
+          path: admin_policy_term_path(@policy_term), 
+          variant: "danger", custom_class: "glass-btn-sm",
+          data: { turbo_frame: "_top" }, 
+          loading_text: "Excluindo..."
+      ) %>
+    <% end %>
+
+  <% end %>
+</turbo-frame>

@@ -3,17 +3,18 @@
     <%= form.label field, label, class: label_color %>
   <% end %>
   
+  <!-- O Rails agora fará o Data Binding automático no Edit usando as input_options dinâmicas -->
   <% if type == "date" %>
-    <%= form.date_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.date_field field, input_options %>
   <% elsif type == "email" %>
-    <%= form.email_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.email_field field, input_options %>
   <% elsif type == "number" %>
-    <%= form.number_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.number_field field, input_options %>
   <% elsif type == "password" %>
-    <%= form.password_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.password_field field, input_options %>
   <% elsif type == "datetime-local" %>
-    <%= form.datetime_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.datetime_field field, input_options %>
   <% else %>
-    <%= form.text_field field, class: final_classes, placeholder: placeholder, data: input_data %>
+    <%= form.text_field field, input_options %>
   <% end %>
 </div>

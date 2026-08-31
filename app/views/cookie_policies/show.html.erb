@@ -1,0 +1,35 @@
+<% content_for :title, "Política de Cookies" %>
+
+<div class="space-y-6 h-full flex flex-col">
+  <!-- 1. Cabeçalho Padronizado -->
+  <div class="glass-card shrink-0">
+    <div class="flex items-center gap-4">
+      <%= render Shared::IconButtonComponent.new(
+          icon: "arrow-left", path: root_path, type: "link", variant: "ghost", title: "Voltar para o Início"
+      ) %>
+      
+      <div>
+        <h2 class="glass-section-title flex items-center gap-2">
+          <%= heroicon "shield-check", options: { class: "w-6 h-6 text-violet-400" } %>
+          Termos e Política de Cookies
+        </h2>
+        <p class="glass-text-sm text-white/70 mt-1">
+          Documento Versão: <strong class="text-white"><%= @policy.version %></strong> | Última atualização em: <%= @policy.updated_at.strftime("%d/%m/%Y") %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Corpo do Documento (Com Contraste de Input e Scroll Interno) -->
+  <div class="glass-card p-6 sm:p-8 flex-1 min-h-0 flex flex-col">
+    <!-- Falso "Textarea" para gerar contraste e limite -->
+    <div class="bg-black/20 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-inner flex-1 min-h-0 flex flex-col">
+      
+      <!-- O contêiner de rolagem (60% da altura da tela) -->
+      <div class="text-white/80 leading-relaxed whitespace-pre-wrap overflow-y-auto custom-scrollbar pr-4 text-sm md:text-base max-h-[60vh]">
+        <%= @policy.content %>
+      </div>
+      
+    </div>
+  </div>
+</div>

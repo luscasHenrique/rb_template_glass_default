@@ -54,8 +54,11 @@
     <div class="fixed inset-0 pointer-events-none z-50">
       <div class="pointer-events-auto">
         <%= render Shared::FlashMessagesComponent.new(flash: flash) %>
-        <%= render Shared::CookieBannerComponent.new %>
-      </div>
+        <%= render Shared::CookieBannerComponent.new(
+              cookie_consent: cookies[:cookie_consent],
+              current_policy: CookiePolicy.current
+        ) %>     
+    </div>
     </div>
     
     <%= render Shared::GlobalLoadingComponent.new %>

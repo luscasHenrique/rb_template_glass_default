@@ -1,4 +1,5 @@
 <label class="<%= final_classes %>">
-  <%= form.radio_button field, value, class: "glass-radio" %>
+  <!-- Repassando a injeção de dependências para o Rails -->
+  <%= form.radio_button field, value, class: "glass-radio", data: input_data %>
   <span class="text-sm font-medium text-white cursor-pointer select-none"><%= label %></span>
 </label>

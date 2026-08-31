@@ -11,8 +11,7 @@ class ApplicationController < ActionController::Base
   
   # Trava Global de Autorização (Pundit)
   include Pundit::Authorization
-  after_action :verify_authorized, unless: :devise_controller?
-
+  after_action :verify_authorized, unless: -> { devise_controller? || controller_name == 'cookie_consents' }
   # ==========================================
   # INTERCEPTADORES DE EXCEÇÕES (Mapeamento HTTP)
   # ==========================================

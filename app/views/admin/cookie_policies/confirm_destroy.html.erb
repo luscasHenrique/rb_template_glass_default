@@ -1,0 +1,34 @@
+<turbo-frame id="remote_modal">
+  <%= render Shared::ModalComponent.new(id: "delete_cookie_policy_modal", size: "sm") do |modal| %>
+    
+    <% modal.with_header do %>
+      <div class="flex items-center gap-2 text-rose-500">
+        <%= heroicon "exclamation-triangle", options: { class: "w-6 h-6 shrink-0" } %>
+        Confirmar Exclusão
+      </div>
+    <% end %>
+
+    <% modal.with_body do %>
+      <p class="text-white/80">
+        Tem certeza que deseja excluir permanentemente o rascunho da política versão <strong class="text-white"><%= @cookie_policy.version %></strong>?
+      </p>
+      <p class="text-sm text-white/50 mt-2">Esta ação não poderá ser desfeita.</p>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "default", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <%= render Shared::ButtonComponent.new(
+          text: "Sim, Excluir", icon: "trash", type: "button_to", method: :delete, 
+          path: admin_cookie_policy_path(@cookie_policy), 
+          variant: "danger", custom_class: "glass-btn-sm",
+          data: { turbo_frame: "_top" }, 
+          loading_text: "Excluindo..."
+      ) %>
+    <% end %>
+
+  <% end %>
+</turbo-frame>

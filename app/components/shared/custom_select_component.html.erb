@@ -1,31 +1,39 @@
-<div class="space-y-1 w-full" data-controller="custom-select" data-action="click@window->custom-select#hide">
-  <% if label.present? %>
-    <%= form.label field, label, class: "glass-label" %>
+<div class="space-y-1 w-full relative" data-controller="custom-select" data-action="click@window->custom-select#hide">
+  <% if @label.present? %>
+    <%= @form.label @field, @label, class: "glass-label" %>
   <% end %>
 
-  <div class="relative">
-    <%= form.hidden_field field, data: { custom_select_target: "input" } %>
+  <%= @form.hidden_field @field, data: { custom_select_target: "input" } %>
 
-    <button type="button" 
-            data-action="click->custom-select#toggle"
-            class="glass-select-trigger px-4 py-3 text-base">
-      <span data-custom-select-target="buttonText" class="text-white"><%= current_selected_text %></span>
-      
-      <!-- Arquitetura Limpa: Uso do Heroicon dinâmico para a seta -->
-      <%= heroicon "chevron-down", options: { class: "w-5 h-5 text-white/50 shrink-0" } %>
-    </button>
+  <button type="button" 
+          data-action="click->custom-select#toggle"
+          class="glass-input glass-input-default glass-input-md flex items-center justify-between w-full outline-none">
+    <span data-custom-select-target="buttonText" class="text-white truncate"><%= current_selected_text %></span>
+    <%= heroicon "chevron-down", options: { class: "w-5 h-5 text-white/50 shrink-0 transition-transform duration-200", data: { custom_select_target: "chevron" } } %>
+  </button>
 
-    <div data-custom-select-target="dropdown" class="glass-select-dropdown">
-      <ul class="py-1">
-        <% collection.each do |text, value| %>
-          <li data-action="click->custom-select#select" 
-              data-value="<%= value %>" 
-              data-text="<%= text %>"
-              class="glass-select-option">
-            <%= text %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+  <!-- AQUI ESTÁ A CORREÇÃO CIRÚRGICA: 
+       Removemos a classe base 'glass-select-dropdown' que estava travando a visibilidade no CSS.
+       O componente agora é 100% autônomo e obedece exclusivamente ao Stimulus. -->
+  <div data-custom-select-target="dropdown" class="absolute z-[100] w-full top-full mt-2 !max-h-60 overflow-y-auto custom-scrollbar shadow-2xl hidden rounded-xl border border-white/10 bg-gray-900/95 backdrop-blur-xl py-2">
+    <ul>
+      <% @collection.each do |text, value| %>
+        <% is_selected = (@form.object.send(@field).to_s == value.to_s) %>
+        
+        <li data-action="click->custom-select#select" 
+            data-custom-select-target="option"
+            data-value="<%= value %>" 
+            data-text="<%= text %>"
+            data-selected="<%= is_selected %>"
+            class="px-4 py-3 text-white/80 hover:bg-white/5 cursor-pointer transition-colors flex items-center justify-between group">
+          
+          <span class="text-sm font-medium"><%= text %></span>
+          
+          <div class="w-5 h-5 flex items-center justify-center">
+            <%= heroicon "check", options: { class: "w-4 h-4 text-violet-400 opacity-0 group-data-[selected='true']:opacity-100 transition-opacity duration-200" } %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
   </div>
 </div>

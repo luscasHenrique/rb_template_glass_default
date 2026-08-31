@@ -1,0 +1,158 @@
+<% content_for :title, "Auditoria Global" %>
+
+<%= form_with url: admin_audits_path, method: :get, class: "w-full space-y-6" do |f| %>
+
+  <div class="glass-card">
+    <div>
+      <h2 class="glass-section-title flex items-center gap-2">
+        <%= heroicon "clipboard-document-list", options: { class: "w-6 h-6 text-violet-400" } %>
+        Auditoria de Sistema (Logs)
+      </h2>
+      <p class="glass-text-sm text-white/70 mt-1">Rastreamento global de alterações. Filtre e exporte relatórios compliance.</p>
+    </div>
+  </div>
+
+  <%= render Shared::TableComponent.new(
+      headers: ["Data/Hora", "Autor (Operador)", "Ação", "Alvo Afetado", "Entidade / ID", { text: "Detalhes", align: "right" }],
+      selectable: true,
+      custom_class: "mb-8"
+  ) do |table| %>
+      
+      <!-- GAVETA DE FILTROS -->
+      <% table.with_filters do %>
+        <div class="flex flex-wrap items-end gap-3">
+          
+          <div class="w-full md:w-56">
+            <%= render Shared::MultiSelectComponent.new(
+                form: f, 
+                field: :whodunnit_ids, 
+                collection: @operators_collection, 
+                label: "Operador (Quem fez)", 
+                placeholder: "Selecione o autor..."
+            ) %>
+          </div>
+
+          <div class="w-full md:w-52">
+            <%= render Shared::MultiSelectComponent.new(
+                form: f, 
+                field: :item_types, 
+                collection: @item_types_collection, 
+                variant: "info",
+                label: "Entidade Afetada", 
+                placeholder: "Selecione a tabela..."
+            ) %>
+          </div>
+
+          <div class="w-full md:w-32">
+            <%= render Shared::InputComponent.new(
+                form: f, 
+                field: :item_id, 
+                type: "number", 
+                label: "ID do Alvo", 
+                placeholder: "Ex: 2", 
+                value: params[:item_id]
+            ) %>
+          </div>
+
+          <div class="w-full md:w-36">
+            <%= render Shared::InputComponent.new(form: f, field: :start_date, type: "date", label: "Data Inicial", value: params[:start_date]) %>
+          </div>
+          <div class="w-full md:w-36">
+            <%= render Shared::InputComponent.new(form: f, field: :end_date, type: "date", label: "Data Final", value: params[:end_date]) %>
+          </div>
+          
+          <%= render Shared::ButtonComponent.new(text: "Filtrar", type: "submit", variant: "outline-primary", icon: "funnel") %>
+          
+          <% if params[:whodunnit_ids].present? || params[:item_types].present? || params[:item_id].present? || params[:start_date].present? %>
+            <%= render Shared::ButtonComponent.new(text: "Limpar", type: "link", path: admin_audits_path, variant: "ghost") %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- GAVETA DE AÇÕES -->
+      <% table.with_actions do %>
+        <%= render Shared::ButtonComponent.new(
+            text: "Exportar Filtro (CSV)", 
+            icon: "arrow-down-tray", 
+            type: "link", 
+            variant: "outline-success",
+            path: admin_audits_path(request.query_parameters.merge(format: :csv)) 
+        ) %>
+        
+        <%= render Shared::ButtonComponent.new(
+            text: "Exportar Selecionados", 
+            icon: "document-check", 
+            type: "button", 
+            variant: "outline-info",
+            data: { action: "click->table#exportSelected" }
+        ) %>
+      <% end %>
+
+      <!-- CORPO DA TABELA -->
+      <% @versions.each do |version| %>
+      <tr class="hover:bg-white/5 transition-colors group">
+        
+        <!-- 1. CHECKBOX PADRONIZADO VIA NOSSO COMPONENTE (VARIANT MINIMAL) -->
+        <td class="px-6 py-4 text-center">
+          <%= render Shared::CheckboxComponent.new(
+              form: f, 
+              field: "version_ids[]", 
+              checked_value: version.id, 
+              unchecked_value: nil, 
+              multiple: true, 
+              variant: "minimal",
+              input_data: { table_target: "rowCheckbox" }
+          ) %>
+        </td>
+
+        <!-- 2. DATA/HORA -->
+        <td class="px-6 py-4 text-sm text-white/70">
+          <%= version.created_at.strftime("%d/%m/%Y %H:%M:%S") %>
+        </td>
+        
+        <!-- 3. AUTOR (QUEM FEZ) -->
+        <td class="px-6 py-4 font-medium text-white">
+          <%= @users_map[version.whodunnit]&.email || "Sistema / ID: #{version.whodunnit}" %>
+        </td>
+        
+        <!-- 4. AÇÃO -->
+        <td class="px-6 py-4">
+          <% case version.event %>
+          <% when 'create' %>
+            <%= render Shared::BadgeComponent.new(text: "Criação", variant: "success") %>
+          <% when 'update' %>
+            <%= render Shared::BadgeComponent.new(text: "Edição", variant: "warning") %>
+          <% when 'destroy' %>
+            <%= render Shared::BadgeComponent.new(text: "Exclusão", variant: "danger") %>
+          <% end %>
+        </td>
+        
+        <!-- 5. ALVO AFETADO (QUEM SOFREU A AÇÃO) -->
+        <td class="px-6 py-4 text-sm font-medium text-violet-300">
+  <%= resolve_target_email(version) %>
+</td>
+
+        <!-- 6. ENTIDADE / ID -->
+        <td class="px-6 py-4 text-white/70 text-sm">
+          <%= version.item_type %> <br><span class="text-xs opacity-50">ID: <%= version.item_id %></span>
+        </td>
+        
+        <!-- 7. BOTÃO DE DETALHES -->
+        <td class="px-6 py-4 flex justify-end">
+          <%= render Shared::IconButtonComponent.new(
+              icon: "eye", path: admin_audit_path(version),
+              type: "link", variant: "info", title: "Ver Detalhes Completos",
+              data: { turbo_frame: "remote_modal" }
+          ) %>
+        </td>
+      </tr>
+    <% end %>
+    
+    <% if @versions.empty? %>
+      <tr><td colspan="7" class="px-6 py-8 text-center text-white/50 text-sm">Nenhum log encontrado para os filtros selecionados.</td></tr>
+    <% end %>
+  <% end %>
+
+<% end %>
+
+<turbo-frame id="remote_modal"></turbo-frame>

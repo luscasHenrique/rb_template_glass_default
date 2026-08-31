@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "remote_modal" do %>
+  <%= render Shared::ModalComponent.new(id: "new_user_modal", size: "lg") do |modal| %>
+    
+    <% modal.with_header do %>
+      <div class="flex items-center gap-2 text-white">
+        <%= heroicon "user-plus", options: { class: "w-6 h-6 text-emerald-400 shrink-0" } %>
+        Cadastrar Novo Usuário
+      </div>
+    <% end %>
+
+    <% modal.with_body do %>
+      <%= render "form", user: @user %>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "ghost", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <!-- O form_id aponta para o form_with do partial -->
+      <%= render Shared::ButtonComponent.new(
+          text: "Salvar Usuário", icon: "check", type: "submit", form_id: "user_form",
+          variant: "success", custom_class: "glass-btn-sm", loading_text: "Salvando..."
+      ) %>
+    <% end %>
+
+  <% end %>
+<% end %>

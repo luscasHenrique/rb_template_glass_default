@@ -1,0 +1,36 @@
+<turbo-frame id="remote_modal">
+  <%= render Shared::ModalComponent.new(id: "edit_cookie_policy_modal", size: "lg") do |modal| %>
+    
+    <% modal.with_header do %>
+      Editar Rascunho de Cookies (<%= @cookie_policy.version %>)
+    <% end %>
+
+    <% modal.with_body do %>
+      <%= form_with(model: [:admin, @cookie_policy], id: "edit_cookie_policy_form", class: "space-y-6", data: { turbo_frame: "_top" }) do |f| %>
+        
+        <%= render Shared::InputComponent.new(
+            form: f, field: :version, label: "Identificador da Versão", 
+            value: f.object.version
+        ) %>
+
+        <%= render Shared::TextareaComponent.new(
+            form: f, field: :content, label: "Conteúdo Legal", custom_class: "min-h-[250px]",
+            value: f.object.content
+        ) %>
+      <% end %>
+    <% end %>
+
+    <% modal.with_footer do %>
+      <%= render Shared::ButtonComponent.new(
+          text: "Cancelar", type: "button", variant: "default", custom_class: "glass-btn-sm",
+          data: { action: "click->modal#close" }
+      ) %>
+      
+      <%= render Shared::ButtonComponent.new(
+          text: "Salvar Alterações", icon: "check", type: "submit", variant: "primary", custom_class: "glass-btn-sm",
+          form_id: "edit_cookie_policy_form" 
+      ) %>
+    <% end %>
+
+  <% end %>
+</turbo-frame>

@@ -1,9 +1,13 @@
 class Shared::CheckboxComponent < ViewComponent::Base
-  attr_reader :form, :field, :label, :description, :input_data
+  attr_reader :form, :field, :label, :description, :input_data, :checked_value, :unchecked_value, :multiple
 
-  def initialize(form:, field:, variant: "default", custom_class: "p-4", label: nil, description: nil, input_data: {})
+  # Adicionados os parâmetros nativos do Rails para checkboxes
+  def initialize(form:, field:, checked_value: "1", unchecked_value: "0", multiple: false, variant: "default", custom_class: "p-4", label: nil, description: nil, input_data: {})
     @form = form
     @field = field
+    @checked_value = checked_value
+    @unchecked_value = unchecked_value
+    @multiple = multiple
     @variant = variant
     @custom_class = custom_class
     @label = label

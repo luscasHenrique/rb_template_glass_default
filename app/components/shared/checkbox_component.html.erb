@@ -1,9 +1,10 @@
 <div class="<%= final_classes %>">
-  <%= form.check_box field, class: "glass-checkbox", data: input_data %>
+  <!-- ARQUITETURA LIMPA: O Helper agora recebe os valores reais do BD -->
+  <%= form.check_box field, { class: "glass-checkbox", multiple: multiple, data: input_data }, checked_value, unchecked_value %>
   
   <div>
     <% if label.present? %>
-      <%= form.label field, label, class: "text-sm font-medium #{text_color} cursor-pointer select-none m-0 block" %>
+      <%= form.label field, label, value: checked_value, class: "text-sm font-medium #{text_color} cursor-pointer select-none m-0 block" %>
     <% end %>
     
     <% if description.present? %>

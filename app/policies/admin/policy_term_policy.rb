@@ -17,8 +17,24 @@ module Admin
       create?
     end
 
+    def edit?
+      admin_or_master?
+    end
+
+    def update?
+      admin_or_master?
+    end
+
     def activate?
       admin_or_master?
+    end
+
+    def destroy?
+      admin_or_master?
+    end
+
+    def confirm_destroy?
+      destroy?
     end
   end
 end

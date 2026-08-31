@@ -1,21 +1,23 @@
 class Shared::IconButtonComponent < ViewComponent::Base
   delegate :heroicon, to: :helpers
 
-  def initialize(icon: nil, path: "#", method: :get, variant: "ghost", custom_class: "", data: {}, title: nil)
+  # Adicionado o form_id: nil
+  def initialize(icon: nil, path: "#", method: :get, variant: "ghost", type: "button_to", custom_class: "", data: {}, title: nil, form_id: nil)
     @icon = icon
     @path = path
     @method = method
     @variant = variant
+    @type = type
     @custom_class = custom_class
     @data = data
     @title = title
+    @form_id = form_id
   end
 
   def final_classes
-    # Base estrutural já definida no seu CSS (p-2, rounded-xl, flex-center)
-    base = "glass-icon-btn"
+    base = "glass-icon-btn relative outline-none focus:outline-none"
+  
     
-    # Mapeamento direto para as classes Outline Glow do application.css
     variant_class = case @variant.to_s
                     when "primary" then "glass-btn-outline-primary"
                     when "danger"  then "glass-btn-outline-danger"
@@ -24,7 +26,6 @@ class Shared::IconButtonComponent < ViewComponent::Base
                     when "info"    then "glass-btn-outline-info"
                     when "ghost"   then "glass-icon-btn-ghost"
                     else
-                      # Smart Fallback: Aceita novas cores criadas no CSS sem precisar alterar o Ruby
                       "glass-btn-outline-#{@variant}"
                     end
                     

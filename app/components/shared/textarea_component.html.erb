@@ -1,8 +1,8 @@
 <div class="space-y-1 w-full">
   <% if label.present? %>
-    <!-- Arquitetura Limpa: Rótulo reativo ao estado do componente -->
     <%= form.label field, label, class: label_color %>
   <% end %>
   
-  <%= form.text_area field, class: final_classes, placeholder: placeholder, data: input_data %>
+  <!-- O Rails agora fará o Data Binding automático no Edit usando as input_options -->
+  <%= form.text_area field, input_options %>
 </div>

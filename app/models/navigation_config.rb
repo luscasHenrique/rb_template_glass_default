@@ -5,7 +5,7 @@ class NavigationConfig
       path: -> { Rails.application.routes.url_helpers.root_path },
       icon: "presentation-chart-bar",
       policy_record: :dashboard, 
-      policy_action: :index? # <-- Ajustado para bater com o DashboardPolicy
+      policy_action: :index? 
     },
     {
       title: "Agenda",
@@ -26,28 +26,46 @@ class NavigationConfig
       title: "Gráficos",
       section: "Análises",
       icon: "chart-pie",
-      policy_record: :chart,       # Aponta para ChartPolicy
-      policy_action: :index?,      # Testa o método index?
+      policy_record: :chart,       
+      policy_action: :index?,      
       path: -> { Rails.application.routes.url_helpers.respond_to?(:charts_path) ? Rails.application.routes.url_helpers.charts_path : "#" }
     },
     {
       title: "Administração",
       section: "Gestão do Sistema",
       icon: "cog-6-tooth",
+      # O menu pai verifica uma permissão genérica apenas para saber se renderiza a categoria
       policy_record: :dashboard,
       policy_action: :admin_panel?, 
       sub_items: [
         {
           title: "Usuários",
           path: -> { Rails.application.routes.url_helpers.respond_to?(:admin_users_path) ? Rails.application.routes.url_helpers.admin_users_path : "#" },
-          policy_record: :dashboard, 
-          policy_action: :admin_panel? # <-- Reflete a permissão real
+          # AQUI: Consultando estritamente a Admin::UserPolicy
+          policy_record: [:admin, :user], 
+          policy_action: :index? 
         },
         {
           title: "Termos de Uso",
           path: -> { Rails.application.routes.url_helpers.respond_to?(:admin_policy_terms_path) ? Rails.application.routes.url_helpers.admin_policy_terms_path : "#" },
-          policy_record: :dashboard, 
-          policy_action: :admin_panel?
+          # AQUI: Consultando estritamente a Admin::PolicyTermPolicy
+          policy_record: [:admin, :policy_term], 
+          policy_action: :index?
+        },
+        {
+          title: "Cookies (LGPD)",
+          path: -> { Rails.application.routes.url_helpers.respond_to?(:admin_cookie_policies_path) ? Rails.application.routes.url_helpers.admin_cookie_policies_path : "#" },
+          # AQUI: Consultando estritamente a Admin::CookiePolicyPolicy
+          policy_record: [:admin, :cookie_policy], 
+          policy_action: :index?
+        },
+        {
+          title: "Auditoria Global",
+          icon: "clipboard-document-list",
+          path: -> { Rails.application.routes.url_helpers.respond_to?(:admin_audits_path) ? Rails.application.routes.url_helpers.admin_audits_path : "#" },
+          # AQUI: Consultando estritamente a Admin::AuditPolicy
+          policy_record: [:admin, :audit], 
+          policy_action: :index?
         }
       ]
     }
@@ -67,7 +85,6 @@ class NavigationConfig
     end
   end
 
-  # ARQUITETURA LIMPA E SEGURA: Default Deny. Se der erro, não mostra o menu!
   def self.allowed?(user, record, action)
     policy = Pundit.policy(user, record)
     policy ? policy.public_send(action) : false

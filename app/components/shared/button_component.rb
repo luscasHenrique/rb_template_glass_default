@@ -1,7 +1,8 @@
 class Shared::ButtonComponent < ViewComponent::Base
   delegate :heroicon, to: :helpers
 
-  def initialize(text: nil, variant: "primary", type: "button", method: :get, path: "#", icon: nil, icon_position: "left", loading_text: "Aguarde...", disable_loading: false, custom_class: "", data: {}, onclick: nil)
+  # Adicionado o form_id: nil
+  def initialize(text: nil, variant: "primary", type: "button", method: :get, path: "#", icon: nil, icon_position: "left", loading_text: "Aguarde...", disable_loading: false, custom_class: "", data: {}, onclick: nil, form_id: nil)
     @text = text
     @variant = variant
     @type = type
@@ -14,6 +15,7 @@ class Shared::ButtonComponent < ViewComponent::Base
     @custom_class = custom_class
     @data_attributes = data
     @onclick = onclick
+    @form_id = form_id
   end
 
   def merged_data
@@ -32,8 +34,7 @@ class Shared::ButtonComponent < ViewComponent::Base
     has_size = @custom_class.match?(/(glass-btn-(xsm|sm|md|lg)|\bp-|\bpx-|\bpy-)/)
     default_size = has_size ? "" : "glass-btn-md"
     
-    base_classes = "glass-btn relative outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black/50"
-
+base_classes = "glass-btn relative outline-none focus:outline-none"
     variant_classes = case @variant.to_s
                       when "primary"   then "glass-btn-primary"
                       when "danger"    then "glass-btn-danger"
@@ -41,7 +42,6 @@ class Shared::ButtonComponent < ViewComponent::Base
                       when "warning"   then "glass-btn-warning"
                       when "info"      then "glass-btn-info"
                       when "blue"      then "glass-btn-blue"
-                      # Mapeamento do padrão neutro/glass
                       when "secondary", "default", "ghost" then "glass-btn-secondary"
                       when "none"      then ""
                       when /^outline-(.*)$/ then "glass-btn-#{@variant}"

@@ -1,0 +1,85 @@
+<% content_for :title, "Gestão de Políticas de Cookies" %>
+
+<!-- 1. Cabeçalho Isolado (Padronizado com Termos de Uso) -->
+<div class="glass-card mb-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="glass-section-title">Políticas de Cookies (LGPD)</h2>
+      <p class="glass-text-sm text-white/70 mt-1">Gerencie as versões e os textos legais dos banners de cookies.</p>
+    </div>
+    
+    <%= render Shared::ButtonComponent.new(
+        text: "Nova Política",
+        icon: "plus",
+        type: "link",
+        path: new_admin_cookie_policy_path,
+        variant: "outline-blue"
+    ) %>
+  </div>
+</div>
+
+<!-- 2. Componente de Tabela Responsivo -->
+<%= render Shared::TableComponent.new(
+    headers: ["Versão", "Data de Criação", "Status", { text: "Ações", align: "right" }],
+    selectable: false
+) do %>
+  
+  <% @cookie_policies.each do |policy| %>
+    <tr class="hover:bg-white/5 transition-colors group">
+      
+      <td class="px-6 py-4 font-medium text-white"><%= policy.version %></td>
+      <td class="px-6 py-4 text-white/70"><%= policy.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+      
+      <td class="px-6 py-4">
+        <% if policy.active? %>
+          <%= render Shared::BadgeComponent.new(text: "Em Vigor", variant: "success", icon: "check-circle") %>
+        <% else %>
+          <%= render Shared::BadgeComponent.new(text: "Inativo / Rascunho", variant: "grey", icon: "document") %>
+        <% end %>
+      </td>
+      
+      <td class="px-6 py-4 flex items-center justify-end gap-2 opacity-100 sm:opacity-50 sm:group-hover:opacity-100 transition-opacity">
+        
+        <!-- Ação de Visualização para a política ativa (UX amigável) -->
+        <% if policy.active? %>
+          <%= render Shared::IconButtonComponent.new(
+              icon: "eye", path: cookie_policy_path, type: "link", variant: "info", title: "Ver Página Pública",
+              data: { turbo: false }
+          ) %>
+        <% end %>
+
+        <% unless policy.active? %>
+          <%= render Shared::IconButtonComponent.new(
+              icon: "pencil-square", path: edit_admin_cookie_policy_path(policy),
+              type: "link", variant: "warning", title: "Editar Rascunho",
+              data: { turbo_frame: "remote_modal" }
+          ) %>
+          
+          <%= render Shared::IconButtonComponent.new(
+              icon: "trash", path: confirm_destroy_admin_cookie_policy_path(policy),
+              type: "link", variant: "danger", title: "Excluir Rascunho",
+              data: { turbo_frame: "remote_modal" }
+          ) %>
+          
+          <div class="w-px h-6 bg-white/10 mx-1"></div>
+          
+          <%= render Shared::IconButtonComponent.new(
+              icon: "check-circle", path: activate_admin_cookie_policy_path(policy),
+              method: :patch, variant: "success", title: "Ativar Política Oficial",
+              data: { turbo_confirm: "Atenção: Ao ativar, o banner reaparecerá para todos os usuários com cookies desatualizados. Confirma?" }
+          ) %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  
+  <% if @cookie_policies.empty? %>
+    <tr>
+      <td colspan="4" class="px-6 py-8 text-center text-white/50 text-sm">Nenhuma política cadastrada.</td>
+    </tr>
+  <% end %>
+
+<% end %>
+
+<!-- 3. Ponto de Ancoragem do Modal (Deve ficar isolado no final) -->
+<turbo-frame id="remote_modal"></turbo-frame>

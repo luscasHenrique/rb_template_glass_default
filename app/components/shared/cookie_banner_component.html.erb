@@ -1,24 +1,31 @@
-<div class="glass-cookie-banner-wrapper" data-controller="cookie-consent">
+<!-- Adicionamos o ID que o Turbo Stream vai procurar para deletar -->
+<div id="cookie-banner-container" class="glass-cookie-banner-wrapper">
   <div class="glass-cookie-banner-card">
     
     <div class="flex items-center gap-3">
-      <!-- Ícone de Segurança usando nossa nova arquitetura -->
       <div class="p-2 bg-violet-500/20 rounded-lg shrink-0 hidden sm:block">
         <%= heroicon "shield-check", options: { class: "w-6 h-6 text-violet-400" } %>
       </div>
       
       <div class="text-sm text-white/80">
-        <span class="font-bold text-white">Privacidade e LGPD:</span> Utilizamos cookies para garantir a melhor experiência e analisar o tráfego do sistema.
+        <span class="font-bold text-white">Privacidade e LGPD:</span> Utilizamos cookies para garantir a melhor experiência e analisar o tráfego do sistema. 
+        <!-- O LINK MÁGICO AQUI -->
+        <%= link_to "Ler Política Completa", cookie_policy_path, class: "text-violet-400 hover:text-violet-300 underline underline-offset-2 ml-1" %>
       </div>
     </div>
 
     <div class="flex gap-2 shrink-0 mt-3 sm:mt-0 w-full sm:w-auto">
-      <%= render Shared::ButtonComponent.new(
-            text: "Aceitar e Fechar", 
-            variant: "primary", 
-            custom_class: "glass-btn-sm w-full sm:w-auto",
-            data: { action: "click->cookie-consent#accept" }
-      ) %>
+      <!-- Usamos o form_with para acionar o Controller nativamente via Turbo -->
+      <%= form_with url: cookie_consents_path, method: :post, format: :turbo_stream do |f| %>
+        <%= f.hidden_field :type, value: "all" %>
+        
+        <%= render Shared::ButtonComponent.new(
+              text: "Aceitar e Fechar", 
+              variant: "primary", 
+              type: "submit",
+              custom_class: "glass-btn-sm w-full sm:w-auto"
+        ) %>
+      <% end %>
     </div>
     
   </div>

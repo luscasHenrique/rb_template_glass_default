@@ -1,0 +1,29 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <header class="flex items-center gap-4">
+    <%= render Shared::IconButtonComponent.new(
+        icon: "arrow-left", path: admin_cookie_policies_path, type: "link", variant: "ghost"
+    ) %>
+    <h1 class="text-2xl font-bold text-white">Nova Política de Cookies</h1>
+  </header>
+
+  <div class="glass-card p-6">
+    <%= form_with(model: [:admin, @cookie_policy], class: "space-y-6") do |f| %>
+      
+      <%= render Shared::InputComponent.new(
+          form: f, field: :version, label: "Identificador da Versão (Ex: 1.0, 2026-A)",
+          placeholder: "v1.0"
+      ) %>
+
+      <%= render Shared::TextareaComponent.new(
+          form: f, field: :content, label: "Conteúdo Legal", custom_class: "min-h-[300px]",
+          placeholder: "Descreva quais cookies são utilizados, as ferramentas de terceiros (Analytics, Pixel) e os direitos do usuário..."
+      ) %>
+
+      <div class="flex justify-end pt-4 border-t border-white/10">
+        <%= render Shared::ButtonComponent.new(
+            text: "Salvar Rascunho", icon: "check", type: "submit", variant: "primary"
+        ) %>
+      </div>
+    <% end %>
+  </div>
+</div>
