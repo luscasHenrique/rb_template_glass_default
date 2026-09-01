@@ -35,8 +35,8 @@
       ) %>
     </div>
 
-    <nav class="flex-1 p-3 space-y-2 relative overflow-y-auto min-h-0">
-      <% nav_items.group_by { |item| item[:section] }.each do |section, items| %>
+    <nav data-sidebar-target="navContainer" class="flex-1 p-3 space-y-2 relative overflow-y-auto min-h-0">
+          <% nav_items.group_by { |item| item[:section] }.each do |section, items| %>
         <% if section %>
           <div data-sidebar-target="text" class="pt-4 pb-1 px-3 text-[10px] font-bold text-white/40 uppercase tracking-widest"><%= section %></div>
         <% end %>

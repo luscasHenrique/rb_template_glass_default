@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["aside", "text", "footerText", "toggleIcon", "tooltip", "centerWrapper", "backdrop"]
+  // 1. Adicionado navContainer na lista de targets
+  static targets = ["aside", "text", "footerText", "toggleIcon", "tooltip", "centerWrapper", "backdrop", "navContainer"]
 
   // ==========================================
   // LÓGICA MOBILE (Deslizamento suave)
@@ -73,6 +74,11 @@ export default class extends Controller {
     this.tooltipTargets.forEach(el => el.classList.add("hidden"))
     
     this.centerWrapperTargets.forEach(el => el.classList.remove("justify-center"))
+
+    // ARQUITETURA LIMPA: Devolve a rolagem vertical quando o menu expande
+    if (this.hasNavContainerTarget) {
+      this.navContainerTarget.classList.add("overflow-y-auto")
+    }
   }
 
   collapse() {
@@ -86,6 +92,11 @@ export default class extends Controller {
     this.tooltipTargets.forEach(el => el.classList.remove("hidden"))
 
     this.centerWrapperTargets.forEach(el => el.classList.add("justify-center"))
+
+    // ARQUITETURA LIMPA: Remove a rolagem para libertar os tooltips e matar o scroll horizontal
+    if (this.hasNavContainerTarget) {
+      this.navContainerTarget.classList.remove("overflow-y-auto")
+    }
 
     const openSubmenus = this.asideTarget.querySelectorAll('.submenu-list:not(.hidden)')
     openSubmenus.forEach(submenu => {
