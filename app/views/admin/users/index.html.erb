@@ -72,7 +72,10 @@
       <tr class="hover:bg-white/5 transition-colors">
         <td class="px-6 py-4 text-center">
           <div class="glass-checkbox-wrapper glass-checkbox-wrapper-minimal justify-center">
-            <input type="checkbox" class="glass-checkbox" value="<%= user.id %>">
+            <!-- ARQUITETURA LIMPA: Fiação do Target e da Ação Reversa adicionados -->
+            <input type="checkbox" class="glass-checkbox" value="<%= user.id %>"
+                   data-table-target="rowCheckbox"
+                   data-action="change->table#checkRow">
           </div>
         </td>
 
