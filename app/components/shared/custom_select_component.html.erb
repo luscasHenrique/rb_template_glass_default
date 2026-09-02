@@ -1,20 +1,19 @@
 <div class="space-y-1 w-full relative" data-controller="custom-select" data-action="click@window->custom-select#hide">
   <% if @label.present? %>
-    <%= @form.label @field, @label, class: "glass-label" %>
+    <!-- Consome a cor dinâmica (vermelho em caso de erro) -->
+    <%= @form.label @field, @label, class: label_color %>
   <% end %>
 
   <%= @form.hidden_field @field, data: { custom_select_target: "input" } %>
 
+  <!-- O gatilho visual agora escuta as trigger_classes para ficar vermelho se necessário -->
   <button type="button" 
           data-action="click->custom-select#toggle"
-          class="glass-input glass-input-default glass-input-md flex items-center justify-between w-full outline-none">
+          class="<%= trigger_classes %>">
     <span data-custom-select-target="buttonText" class="text-white truncate"><%= current_selected_text %></span>
     <%= heroicon "chevron-down", options: { class: "w-5 h-5 text-white/50 shrink-0 transition-transform duration-200", data: { custom_select_target: "chevron" } } %>
   </button>
 
-  <!-- AQUI ESTÁ A CORREÇÃO CIRÚRGICA: 
-       Removemos a classe base 'glass-select-dropdown' que estava travando a visibilidade no CSS.
-       O componente agora é 100% autônomo e obedece exclusivamente ao Stimulus. -->
   <div data-custom-select-target="dropdown" class="absolute z-[100] w-full top-full mt-2 !max-h-60 overflow-y-auto custom-scrollbar shadow-2xl hidden rounded-xl border border-white/10 bg-gray-900/95 backdrop-blur-xl py-2">
     <ul>
       <% @collection.each do |text, value| %>
@@ -36,4 +35,12 @@
       <% end %>
     </ul>
   </div>
+
+  <!-- ARQUITETURA LIMPA: Injeção do Feedback Visual de Erro -->
+  <% if has_error? %>
+    <p class="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 animate-pulse">
+      <%= heroicon "exclamation-circle", options: { class: "w-4 h-4 shrink-0" } %>
+      <%= error_message %>
+    </p>
+  <% end %>
 </div>

@@ -1,14 +1,21 @@
 <div class="<%= final_classes %>">
-  <!-- ARQUITETURA LIMPA: O Helper agora recebe os valores reais do BD -->
-  <%= form.check_box field, { class: "glass-checkbox", multiple: multiple, data: input_data }, checked_value, unchecked_value %>
+  <!-- Restaura a capacidade Standalone vs Acoplada -->
+  <% if @form.present? %>
+    <%= @form.check_box @field, { class: "glass-checkbox", multiple: @multiple, data: @input_data }, @checked_value, @unchecked_value %>
+  <% else %>
+    <%= check_box_tag @field, @checked_value, false, { class: "glass-checkbox", data: @input_data } %>
+  <% end %>
   
   <div>
-    <% if label.present? %>
-      <%= form.label field, label, value: checked_value, class: "text-sm font-medium #{text_color} cursor-pointer select-none m-0 block" %>
+    <% if @label.present? %>
+      <!-- A label muda de cor dinamicamente se houver erro -->
+      <label class="text-sm font-medium <%= text_color %> cursor-pointer select-none m-0 block">
+        <%= @label %>
+      </label>
     <% end %>
     
-    <% if description.present? %>
-      <span class="text-xs <%= desc_color %> mt-1 block"><%= description %></span>
+    <% if @description.present? %>
+      <span class="text-xs <%= desc_color %> mt-1 block"><%= @description %></span>
     <% end %>
   </div>
 </div>

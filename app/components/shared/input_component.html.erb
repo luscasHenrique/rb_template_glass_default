@@ -3,7 +3,7 @@
     <%= form.label field, label, class: label_color %>
   <% end %>
   
-  <!-- O Rails agora fará o Data Binding automático no Edit usando as input_options dinâmicas -->
+  <!-- O Rails fará o Data Binding automático no Edit usando as input_options dinâmicas -->
   <% if type == "date" %>
     <%= form.date_field field, input_options %>
   <% elsif type == "email" %>
@@ -16,5 +16,13 @@
     <%= form.datetime_field field, input_options %>
   <% else %>
     <%= form.text_field field, input_options %>
+  <% end %>
+
+  <!-- ARQUITETURA LIMPA: Injeção do Feedback Visual de Erro -->
+  <% if has_error? %>
+    <p class="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 animate-pulse">
+      <%= heroicon "exclamation-circle", options: { class: "w-4 h-4 shrink-0" } %>
+      <%= error_message %>
+    </p>
   <% end %>
 </div>

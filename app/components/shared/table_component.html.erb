@@ -22,11 +22,16 @@
           <tr>
             <% if @selectable %>
               <th class="px-6 py-4 w-12 text-center">
-                <div class="glass-checkbox-wrapper glass-checkbox-wrapper-minimal justify-center">
-                  <input type="checkbox" class="glass-checkbox" title="Selecionar Todos" 
-                         data-table-target="masterCheckbox" 
-                         data-action="change->table#toggleAll">
-                </div>
+                <!-- ARQUITETURA LIMPA: Invoca o componente em modo 'standalone' (sem formulário) -->
+                <%= render Shared::CheckboxComponent.new(
+                    form: nil,
+                    field: "master_checkbox",
+                    variant: "minimal",
+                    input_data: { 
+                      table_target: "masterCheckbox", 
+                      action: "change->table#toggleAll" 
+                    }
+                ) %>
               </th>
             <% end %>
 

@@ -2,12 +2,12 @@
 <div class="w-full relative flex flex-col justify-end" data-controller="multi-select" data-action="click@window->multi-select#hide">
   
   <% if @label.present? %>
-    <!-- Usando mb-1 explícito para igualar o comportamento das outras labels do Design System -->
-    <label class="glass-label mb-1"><%= @label %></label>
+    <!-- Consome a cor dinâmica (vermelho em caso de erro) -->
+    <label class="<%= label_color %> mb-1"><%= @label %></label>
   <% end %>
 
-  <!-- TRIGGER: A altura agora é ditada exclusivamente pela classe glass-input-md, idêntica aos outros inputs -->
-  <div data-action="click->multi-select#toggle" class="glass-input glass-input-default glass-input-md flex flex-wrap items-center gap-1.5 cursor-pointer transition-all min-h-[48px] m-0">
+  <!-- TRIGGER: A classe de estado visual agora é controlada pelo método trigger_classes -->
+  <div data-action="click->multi-select#toggle" class="<%= trigger_classes %>">
     
     <div data-multi-select-target="tagContainer" class="flex flex-wrap gap-1.5 empty:hidden pointer-events-auto">
       <!-- Tags injetadas via Stimulus -->
@@ -64,6 +64,14 @@
     </span>
   </template>
 
-  <!-- 2. O Segredo: Input nativo múltiplo oculto MOVIDO PARA O FINAL, fora do fluxo visual de renderização -->
-<%= @form.select @field, @collection, {}, { multiple: true, class: "hidden", data: { multi_select_target: "hiddenSelect" } } %>
+  <!-- 2. O Segredo: Input nativo múltiplo oculto MOVIDO PARA O FINAL -->
+  <%= @form.select @field, @collection, {}, { multiple: true, class: "hidden", data: { multi_select_target: "hiddenSelect" } } %>
+
+  <!-- ARQUITETURA LIMPA: Injeção do Feedback Visual de Erro -->
+  <% if has_error? %>
+    <p class="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 animate-pulse">
+      <%= heroicon "exclamation-circle", options: { class: "w-4 h-4 shrink-0" } %>
+      <%= error_message %>
+    </p>
+  <% end %>
 </div>

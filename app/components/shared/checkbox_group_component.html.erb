@@ -1,6 +1,6 @@
-<div class="space-y-2 <%= @custom_class %>">
+<div class="space-y-2 w-full <%= @custom_class %>">
   <% if @label.present? %>
-    <div class="glass-label"><%= @label %></div>
+    <div class="<%= label_color %>"><%= @label %></div>
   <% end %>
   
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -8,7 +8,6 @@
       <% if @type == :radio %>
         <%= render Shared::RadioButtonComponent.new(form: @form, field: @field, value: val, label: text) %>
       <% else %>
-        <!-- INTEGRAÇÃO CORRETA: Passando os valores estruturais em vez de usar data-attributes -->
         <%= render Shared::CheckboxComponent.new(
             form: @form, 
             field: @field, 
@@ -21,4 +20,12 @@
       <% end %>
     <% end %>
   </div>
+
+  <!-- ARQUITETURA LIMPA: Injeção do Feedback Visual de Erro -->
+  <% if has_error? %>
+    <p class="text-xs text-rose-400 mt-1 flex items-center gap-1.5 animate-pulse">
+      <%= heroicon "exclamation-circle", options: { class: "w-4 h-4 shrink-0" } %>
+      <%= error_message %>
+    </p>
+  <% end %>
 </div>

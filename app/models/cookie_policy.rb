@@ -1,12 +1,13 @@
-
 class CookiePolicy < ApplicationRecord
-  validates :version, :content, presence: true
-  validates :version, uniqueness: true
+  # ARQUITETURA LIMPA: Mensagens de erro descritivas e traduzidas
+  validates :version, presence: { message: "não pode ficar em branco" }
+  validates :content, presence: { message: "não pode ficar em branco" }
+  
+  validates :version, uniqueness: { 
+    message: "já está em uso. Por favor, escolha um identificador diferente." 
+  }
 
-  # Escopo rápido para buscar a versão em vigor
   scope :current, -> { where(active: true).order(created_at: :desc).first }
-
-  # Regra de Negócio: Garante que apenas uma política fique ativa por vez
   before_save :deactivate_others, if: :active?
 
   private

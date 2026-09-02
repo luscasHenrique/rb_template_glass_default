@@ -20,6 +20,8 @@ module Admin
         flash[:success] = "Política de Cookies cadastrada com sucesso. Revise e ative quando estiver pronto."
         redirect_to admin_cookie_policies_path
       else
+        # ARQUITETURA LIMPA: Mapeamento do Unhappy Path para o Toast Global
+        flash.now[:danger] = "Não foi possível salvar: #{@cookie_policy.errors.full_messages.to_sentence}."
         render :new, status: :unprocessable_entity
       end
     end
@@ -37,6 +39,8 @@ module Admin
         flash[:success] = "Rascunho da Política atualizado com sucesso."
         redirect_to admin_cookie_policies_path
       else
+        # ARQUITETURA LIMPA: Feedback visual de erro na edição
+        flash.now[:danger] = "Não foi possível atualizar: #{@cookie_policy.errors.full_messages.to_sentence}."
         render :edit, status: :unprocessable_entity
       end
     end

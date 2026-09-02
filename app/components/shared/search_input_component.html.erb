@@ -1,14 +1,16 @@
 <div class="space-y-1 w-full <%= @custom_class %>">
   <% if @label.present? %>
-    <%= @form.label @field, @label, class: "glass-label" %>
+    <!-- Consome a cor dinâmica (vermelho em caso de erro) -->
+    <%= @form.label @field, @label, class: label_color %>
   <% end %>
 
-  <div class="glass-search-wrapper">
+  <div class="glass-search-wrapper relative">
+    <!-- Ícone de Lupa -->
     <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/50 z-10">
       <%= heroicon "magnifying-glass", options: { class: "w-5 h-5" } %>
     </div>
     
-    <!-- Composição Perfeita: O InputComponent é chamado sem label (para não duplicar) -->
+    <!-- Composição: O InputComponent assumirá as bordas vermelhas e a mensagem se houver erro -->
     <%= render Shared::InputComponent.new(
         form: @form, 
         field: @field, 

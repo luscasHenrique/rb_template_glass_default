@@ -14,6 +14,16 @@ class Shared::PasswordInputComponent < ViewComponent::Base
     @input_data = input_data
   end
 
+  # ARQUITETURA LIMPA: Verifica se há erro no campo
+  def has_error?
+    @form.object.present? && @form.object.errors[@field].any?
+  end
+
+  # Captura a primeira mensagem de erro traduzida
+  def error_message
+    @form.object.errors[@field].first
+  end
+
   def merged_input_data
     existing_targets = @input_data[:password_visibility_target].to_s
     @input_data.merge({
@@ -24,7 +34,10 @@ class Shared::PasswordInputComponent < ViewComponent::Base
   def final_classes
     base_class = "glass-input-password-base"
     
-    variant_class = case @variant
+    # Se houver erro, subscreve a variante padrão para erro
+    active_variant = has_error? ? "error" : @variant
+
+    variant_class = case active_variant
                     when "danger", "error" then "glass-input-password-danger"
                     when "outline"         then "glass-input-password-outline"
                     else                        "glass-input-password-default"
@@ -34,10 +47,11 @@ class Shared::PasswordInputComponent < ViewComponent::Base
   end
 
   def label_color
-    ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
+    has_error? || ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
   end
 
   def icon_color
-    ["danger", "error"].include?(@variant) ? "text-rose-400 hover:text-rose-300" : "text-white/40 hover:text-white"
+    # Se houver erro, o ícone de mostrar/ocultar senha também fica vermelho
+    has_error? || ["danger", "error"].include?(@variant) ? "text-rose-400 hover:text-rose-300" : "text-white/40 hover:text-white"
   end
 end

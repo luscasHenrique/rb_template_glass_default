@@ -13,9 +13,16 @@ class Shared::InputComponent < ViewComponent::Base
     @value = value
   end
 
-  # ARQUITETURA LIMPA: Constrói as opções HTML dinamicamente.
-  # Delega ao Rails a responsabilidade de preencher o valor (Data Binding)
-  # a menos que um valor explícito tenha sido passado via parâmetro.
+  # ARQUITETURA LIMPA: Verifica se existe um objeto no form e se ele tem erro neste campo específico
+  def has_error?
+    @form.object.present? && @form.object.errors[@field].any?
+  end
+
+  # Captura a primeira mensagem de erro traduzida
+  def error_message
+    @form.object.errors[@field].first
+  end
+
   def input_options
     opts = { class: final_classes, placeholder: @placeholder, data: @input_data }
     opts[:value] = @value unless @value.nil?
@@ -27,7 +34,10 @@ class Shared::InputComponent < ViewComponent::Base
     has_size = @custom_class.match?(/(glass-input-(sm|md|lg)|\bp-|\bpx-|\bpy-)/)
     default_size = has_size ? "" : "glass-input-md"
 
-    variant_classes = case @variant
+    # Se o campo tiver erro no Active Record, força a variante visual de erro
+    active_variant = has_error? ? "error" : @variant
+
+    variant_classes = case active_variant
                       when "danger", "error" then "glass-input-error"
                       when "success"         then "glass-input-success"
                       when "warning"         then "glass-input-warning"
@@ -39,6 +49,7 @@ class Shared::InputComponent < ViewComponent::Base
   end
 
   def label_color
-    ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
+    # A label também fica vermelha automaticamente
+    has_error? || ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
   end
 end

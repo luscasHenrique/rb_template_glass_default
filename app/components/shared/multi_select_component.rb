@@ -1,14 +1,32 @@
-# app/components/shared/multi_select_component.rb
 class Shared::MultiSelectComponent < ViewComponent::Base
   delegate :heroicon, to: :helpers
 
   def initialize(form:, field:, collection:, label: nil, variant: "primary", placeholder: "Selecione..")
     @form = form
     @field = field
-    @collection = collection # Espera um array de arrays, ex: [["Admin", "admin"], ["User", "user"]]
+    @collection = collection 
     @label = label
     @variant = variant
     @placeholder = placeholder
+  end
+
+  # ARQUITETURA LIMPA: Detecção de erros no Active Record
+  def has_error?
+    @form.object.present? && @form.object.errors[@field].any?
+  end
+
+  def error_message
+    @form.object.errors[@field].first
+  end
+
+  def label_color
+    has_error? ? "text-rose-400" : "glass-label"
+  end
+
+  def trigger_classes
+    base = "glass-input glass-input-md flex flex-wrap items-center gap-1.5 cursor-pointer transition-all min-h-[48px] m-0"
+    state_class = has_error? ? "glass-input-error" : "glass-input-default"
+    "#{base} #{state_class}"
   end
 
   # Mapeia as cores das tags baseado nas suas variantes Outline Glow

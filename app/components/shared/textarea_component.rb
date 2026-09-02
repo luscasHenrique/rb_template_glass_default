@@ -12,7 +12,16 @@ class Shared::TextareaComponent < ViewComponent::Base
     @value = value
   end
 
-  # ARQUITETURA LIMPA: Constrói as opções dinamicamente para preservar o Data Binding do Rails.
+  # ARQUITETURA LIMPA: Verifica se existe erro de validação neste campo específico
+  def has_error?
+    @form.object.present? && @form.object.errors[@field].any?
+  end
+
+  # Captura a primeira mensagem de erro traduzida
+  def error_message
+    @form.object.errors[@field].first
+  end
+
   def input_options
     opts = { class: final_classes, placeholder: @placeholder, data: @input_data }
     opts[:value] = @value unless @value.nil?
@@ -21,11 +30,15 @@ class Shared::TextareaComponent < ViewComponent::Base
 
   def final_classes
     base = "glass-textarea"
-    variant_class = ["danger", "error"].include?(@variant) ? "glass-textarea-error" : ""
+    
+    # Se o Active Record acusar erro, subscreve a variante padrão para erro
+    active_variant = has_error? ? "error" : @variant
+    variant_class = ["danger", "error"].include?(active_variant) ? "glass-textarea-error" : ""
+    
     "#{base} #{variant_class} #{@custom_class}".squish
   end
 
   def label_color
-    ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
+    has_error? || ["danger", "error"].include?(@variant) ? "text-rose-400" : "glass-label"
   end
 end
