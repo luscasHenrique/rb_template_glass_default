@@ -3,7 +3,7 @@ source "https://rubygems.org"
 # ==========================================
 # 1. CORE DO RAILS & PERFORMANCE (Infraestrutura)
 # ==========================================
-gem "rails", "~> 8.1.3", ">= 8.1.3.1"
+gem "rails", "~> 8.1.4"
 gem "propshaft"
 gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
