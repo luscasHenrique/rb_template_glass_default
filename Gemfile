@@ -24,7 +24,7 @@ gem "solid_cable"
 # ==========================================
 gem "tailwindcss-rails"
 gem "view_component", "~> 4.12"
-gem "rails_icons", "~> 1.9"
+gem "rails_icons", "~> 1.10"
 
 # ==========================================
 # 3. SEGURANÇA, GOVERNANÇA E AUDITORIA (Zero Trust)
